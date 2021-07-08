@@ -1,10 +1,11 @@
-#v_table corresponds main data 
-
+--v_table corresponds to our main data 
 
 SELECT * FROM v_table
 
-#Create a table that called 'Median_Table' and contains all groups' median
+--Create a table that called 'Median_Table' and contains all groups' median
 
+SET @row_number:= 0; -- variable that created to calculate median
+SET @median_group:=''; -- variable that created to calculate median
 CREATE TABLE Median_Table
 AS
 	SELECT 
@@ -34,11 +35,18 @@ AS
 	GROUP BY median_group;
   
  
-#Alter the null cells with Median_Table
+--Alter the null cells with Median_Table
   
 Update v_table
 SET daily_vaccinations = (
 	SELECT median 
 	From Median_Table 
-  Where v_table.country = Median_Table.median_group)
+  	Where v_table.country = Median_Table.median_group)
+WHERE daily_vaccinations IS null;
+
+--Remain parts' the null cells do not have any valid values that are able calculated their median.
+--All of them are filled with 0 
+
+Update v_table
+SET daily_vaccinations = 0
 WHERE daily_vaccinations IS null;
